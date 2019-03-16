@@ -1,4 +1,4 @@
-{ "_id" : ObjectId("4eb37efb3de67c4eca000000" ),
+[{ "_id" : "4eb37efb3de67c4eca000000",
   "favorited" : false,
   "in_reply_to_user_id" : 85224059,
   "contributors" : null,
@@ -10,7 +10,7 @@
   "in_reply_to_status_id_str" : "132336028009771008",
   "coordinates" : {
     "type" : "Point",
-    "coordinates" : [ 145.08645638, -37.96924206 ],},
+    "coordinates" : [ 145.08645638, -37.96924206 ]},
   "id" : 132336463206551552,
   "entities" : {
     "user_mentions" : [ {
@@ -68,8 +68,8 @@
     "time_zone" : "Melbourne",
     "protected" : false,
     "default_profile" : false,
-    "following" : null } }
-{ "_id" : ObjectId( "4eb37eff3de67c4eca000001" ),
+    "following" : null } },
+{ "_id" : "4eb37eff3de67c4eca000001",
   "favorited" : false,
   "in_reply_to_user_id" : 122616612,
   "contributors" : null,
@@ -97,7 +97,8 @@
   "id_str" : "132336477853073410",
   "place" : null,
   "retweet_count" : 0,
-  "geo" : { "type" : "Point",
+  "geo" : {
+    "type" : "Point",
     "coordinates" : [ -37.81440438, 144.96573506 ] },
   "in_reply_to_user_id_str" : "122616612",
   "user" : {
@@ -138,4 +139,4 @@
     "time_zone" : "Melbourne",
     "protected" : false,
     "default_profile" : false,
-    "following" : null } }
+    "following" : null } }]
