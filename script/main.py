@@ -28,25 +28,25 @@ def main():
         if ord(list(area["id"])[0]) - 65 > max_row:
             max_row = ord(list(area["id"])[0]) - 65
 
-    area_matrix = numpy.empty([max_row + 1, max_column+1],dtype=Area)
+    area_matrix = numpy.empty([max_row + 1, max_column+1], dtype=Area)
 
     for a in areas:
         ax = int(list(a.name)[1]) - 1
         ay = ord(list(a.name)[0]) - 65
         area_matrix[ay, ax] = a
 
-    for i in range(0, 1000):
-        if data[i]['geo'] is None:
+    for d in data:
+        if d['geo'] is None:
             continue
-        print(data[i]['geo']['coordinates'][1])
-        print(data[i]['geo']['coordinates'][0])
-        x = math.floor((data[i]['geo']['coordinates'][1] - 144.7) / 0.15)
-        y = math.floor(((data[i]['geo']['coordinates'][0]+37.5)*(-1))/0.15)
-        if x>=0 and y>=0 and x < max_row and y < max_column:
-            if area_matrix[y,x] is not None:
-                print(area_matrix[y,x].name)
-                area_matrix[y, x].tweet_number += 1
-        print("\n")
+
+        x = math.floor((d['geo']['coordinates'][1] - 144.7) / 0.15)
+        y = math.floor(((d['geo']['coordinates'][0]+37.5)*(-1))/0.15)
+        if 0 <= x < max_row and 0 <= y < max_column and area_matrix[y, x] is not None:
+            print(d['geo']['coordinates'][1])
+            print(d['geo']['coordinates'][0])
+            print(area_matrix[y, x].name)
+            print("\n")
+            area_matrix[y, x].tweet_number += 1
 
     for l in area_matrix:
         for o in l:
