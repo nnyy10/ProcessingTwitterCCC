@@ -1,19 +1,18 @@
 import os
-import sys
 import json
-import decimal
 import numpy
 import math
 
+
 def main():
-    f = open(r'C:\Users\Naiyun\PycharmProjects\ProcessingTwitterCCC\data\tinyTwitter.json', encoding="utf8")
+
+    path = os.path.join("..", "data", "tinyTwitter.json")
+    f = open(path, encoding="utf8")
     data = json.load(f)
 
-    f = open(r'C:\Users\Naiyun\PycharmProjects\ProcessingTwitterCCC\data\melbGrid.json', encoding="utf8")
+    path = os.path.join("..", "data", "melbGrid.json")
+    f = open(path, encoding="utf8")
     melbourne_grid = json.load(f)
-
-    print(data[0]['geo']['coordinates'])
-    print(data[1]['geo']['coordinates'])
 
     areas = []
 
@@ -36,7 +35,6 @@ def main():
         ay = ord(list(a.name)[0]) - 65
         area_matrix[ay, ax] = a
 
-    print(area_matrix[3,4].name)
     for i in range(0, 1000):
         if data[i]['geo'] is None:
             continue
@@ -44,20 +42,16 @@ def main():
         print(data[i]['geo']['coordinates'][0])
         x = math.floor((data[i]['geo']['coordinates'][1] - 144.7) / 0.15)
         y = math.floor(((data[i]['geo']['coordinates'][0]+37.5)*(-1))/0.15)
-        #print("x: ", x, ", y: ", y)
         if x>=0 and y>=0 and x < max_row and y < max_column:
             if area_matrix[y,x] is not None:
                 print(area_matrix[y,x].name)
                 area_matrix[y, x].tweet_number += 1
-
         print("\n")
 
     for l in area_matrix:
         for o in l:
             if o is not None:
                 print(o.name, ": ", o.tweet_number)
-    #for area in areas:
-    #    print(area.name,": " ,round((area.x_max-144.85)/0.15,10)==1)
 
 
 class Area:
