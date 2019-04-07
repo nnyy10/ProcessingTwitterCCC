@@ -3,14 +3,23 @@ import json
 import numpy
 import math
 
+import time
+from mpi4py import MPI
+
+# get start time
+start_time = time.time()
+comm = MPI.COMM_WORLD
+size = comm.Get_size()
+rank = comm.Get_rank()
+
+print(size, rank, comm)
 
 def main():
-
-    path = os.path.join("..", "data", "tinyTwitter.json")
+    path = "tinyTwitter.json"
     f = open(path, encoding="utf8")
-    data = json.load(f)
+    data = json.load(f)["rows"]
 
-    path = os.path.join("..", "data", "melbGrid.json")
+    path = "melbGrid.json"
     f = open(path, encoding="utf8")
     melbourne_grid = json.load(f)
 
@@ -36,14 +45,14 @@ def main():
         area_matrix[ay, ax] = a
 
     for d in data:
-        if d['geo'] is None:
-            continue
+        # if d['value']['geometry'] is None:
+        #     continue
 
-        x = math.floor((d['geo']['coordinates'][1] - 144.7) / 0.15)
-        y = math.floor(((d['geo']['coordinates'][0]+37.5)*(-1))/0.15)
+        x = math.floor((d['value']['geometry']['coordinates'][0] - 144.7) / 0.15)
+        y = math.floor(((d['value']['geometry']['coordinates'][1]+37.5)*(-1))/0.15)
         if 0 <= x < max_row and 0 <= y < max_column and area_matrix[y, x] is not None:
-            print(d['geo']['coordinates'][1])
-            print(d['geo']['coordinates'][0])
+            print(d['value']['geometry']['coordinates'][0])
+            print(d['value']['geometry']['coordinates'][1])
             print(area_matrix[y, x].name)
             print("\n")
             area_matrix[y, x].tweet_number += 1
@@ -52,10 +61,18 @@ def main():
         for o in l:
             if o is not None:
                 print(o.name, ": ", o.tweet_number)
-
+    
+    found = False
+    for a in data:
+        if 144.700000 < a['value']['geometry']['coordinates'][0] < 144.850000 and -37.650000 < a['value']['geometry']['coordinates'][1] < -37.500000:
+            found = True
+            
+    print(found)
+    
 
 class Area:
     tweet_number = 0
+    feature = dict
 
     def __init__(self, name, x_min, x_max, y_min, y_max):
         self.name = name
