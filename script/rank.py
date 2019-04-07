@@ -12,8 +12,6 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-print("Helloworld! I am process", rank, "of", size)
-
 def construct_melb_grid(file_name):
     """Parse melbGrid.json file and put the value inside dictionary"""
     melb_grid = []
@@ -45,26 +43,24 @@ def match_tweets_coordinates(melb_grid, lat, lng):
 
 
 MELB_GRID = construct_melb_grid('melbGrid.json')
-FILE_NAME = 'tinyTwitter.json'
+FILE_NAME = 'smallTwitter.json'
 
 # Sequential code for running on 1 core and 1 node (Don't need to split the big array)
 if size < 2 and rank == 0:
-    with open(FILE_NAME, encoding="utf8") as f:
+    with open(FILE_NAME) as f:
         chunks = []
         # parse line by line in the file and ignore any error show up
         for line in f:
             try:
                 coords = {}
                 data = json.loads(line[0:len(line) - 2])
-                #print(data)
-                coords["lat"] = data["value"]["geometry"]["coordinates"][0]
-                coords["lng"] = data["value"]["geometry"]["coordinates"][1]
+                coords["lat"] = data["json"]["coordinates"]["coordinates"][0]
+                coords["lng"] = data["json"]["coordinates"]["coordinates"][1]
                 chunks.append(coords)
-                print(coords)
             except:
                 continue
 elif rank == 0: # Parallize routine
-    with open(FILE_NAME, encoding="utf8") as f:
+    with open(FILE_NAME) as f:
         coords_data = []
         # parse line by line in the file and ignore any error show up
         for line in f:
@@ -95,6 +91,8 @@ else:
 
     # Gather all of results from child process
     result = comm.gather(MELB_GRID)
+
+
 
 if rank == 0:
     ROW_RANK = {"A": 0, "B": 0, "C": 0, "D": 0}
