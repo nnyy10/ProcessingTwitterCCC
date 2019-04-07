@@ -1,10 +1,10 @@
-import os
 import json
 import numpy
 import math
-
+import re
 import time
 from mpi4py import MPI
+import operator
 
 # get start time
 start_time = time.time()
@@ -12,10 +12,8 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-print(size, rank, comm)
-
 def main():
-    path = "tinyTwitter.json"
+    path = "smallTwitter.json"
     f = open(path, encoding="utf8")
     data = json.load(f)["rows"]
 
@@ -54,13 +52,23 @@ def main():
             print(d['value']['geometry']['coordinates'][0])
             print(d['value']['geometry']['coordinates'][1])
             print(area_matrix[y, x].name)
-            print("\n")
             area_matrix[y, x].tweet_number += 1
+
+            hashtags = get_hashtags(d['value']['properties']['text'])
+            hashtag_dictionary = area_matrix[y, x].twitter_hashtags
+            for hs in hashtags:
+                hashtag_number = hashtag_dictionary.get(hs)
+                if hashtag_number is None:
+                    hashtag_dictionary[hs] = 1
+                else:
+                    hashtag_dictionary[hs] = hashtag_number + 1
 
     for l in area_matrix:
         for o in l:
             if o is not None:
                 print(o.name, ": ", o.tweet_number)
+                print(o.name, ": ", sorted(o.twitter_hashtags.items(), key=operator.itemgetter(1), reverse=True)[:5])
+                print(o.name, ": ", o.twitter_hashtags)
     
     found = False
     for a in data:
@@ -68,11 +76,12 @@ def main():
             found = True
             
     print(found)
-    
+
+def get_hashtags(twitter_text):
+    return re.findall(r"#(\w+)", twitter_text)
 
 class Area:
     tweet_number = 0
-    feature = dict
 
     def __init__(self, name, x_min, x_max, y_min, y_max):
         self.name = name
@@ -80,7 +89,11 @@ class Area:
         self.x_max = x_max
         self.y_min = y_min
         self.y_max = y_max
-
+        self.twitter_hashtags = {}
 
 if __name__ == '__main__':
     main()
+    twitter_hashtags = {"friend": 1}
+    print(twitter_hashtags.get("d"))
+    twitter_hashtags["d"] = 1
+    print(twitter_hashtags)
