@@ -13,7 +13,6 @@ comm = MPI.COMM_WORLD
 size = comm.Get_size()
 rank = comm.Get_rank()
 
-
 def construct_melb_grid(file_name):
     """Parse melbGrid.json file and put the value inside dictionary"""
     melb_grid = []
@@ -52,7 +51,7 @@ def match_tweets_coordinates(melb_grid, lat, lng, hashtag_list):
 
 
 MELB_GRID = construct_melb_grid('melbGrid.json')
-FILE_NAME = 'smallTwitter.json'
+FILE_NAME = 'tinyTwitter.json'
 
 # Sequential code for running on 1 core and 1 node (Don't need to split the big array)
 if size < 2 and rank == 0:
@@ -63,12 +62,13 @@ if size < 2 and rank == 0:
             try:
                 processed_data = {}
                 data = json.loads(line[0:len(line) - 2])
+
                 processed_data["lat"] = data["value"]["geometry"]["coordinates"][0]
                 processed_data["lng"] = data["value"]["geometry"]["coordinates"][1]
                 text = data['value']['properties']['text']
                 hashtag_list = re.findall(r"#(\w+)", text)
                 processed_data["hashtags"] = hashtag_list
-                print(processed_data)
+
                 chunks.append(processed_data)
             except:
                 pass
