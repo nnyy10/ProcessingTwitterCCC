@@ -43,6 +43,7 @@ def match_tweets_coordinates(melb_grid, lat, lng, hashtag_list):
         if (lat >= grid_data["ymin"] and lat <= grid_data["ymax"]) \
                 and (lng >= grid_data["xmin"] and lng <= grid_data["xmax"]):
             grid_data["count"] = grid_data["count"] + 1
+
             for hs in hashtag_list:
                 if grid_data['hashtag_counts'].get(hs) is None:
                     grid_data["hashtag_counts"][hs] = 1
@@ -58,21 +59,26 @@ if size < 2 and rank == 0:
     with open(FILE_NAME, encoding="utf8") as f:
         chunks = []
         # parse line by line in the file and ignore any error show up
+        cnt = 0
+
         for line in f:
             try:
-                processed_data = {}
                 data = json.loads(line[0:len(line) - 2])
+            except json.decoder.JSONDecodeError:
+                try:
+                    data = json.loads(line[0:len(line) - 1])
+                except json.decoder.JSONDecodeError:
+                    continue
 
-                processed_data["lat"] = data["value"]["geometry"]["coordinates"][0]
-                processed_data["lng"] = data["value"]["geometry"]["coordinates"][1]
-                text = data['value']['properties']['text']
-                hashtag_list = re.findall(r"#(\w+)", text)
-                processed_data["hashtags"] = hashtag_list
+            processed_data = {}
+            processed_data["lat"] = data["value"]["geometry"]["coordinates"][0]
+            processed_data["lng"] = data["value"]["geometry"]["coordinates"][1]
+            text = data['value']['properties']['text']
+            hashtag_list = re.findall(r"#(\w+)", text)
+            processed_data["hashtags"] = hashtag_list
 
-                chunks.append(processed_data)
-            except:
-                pass
-
+            chunks.append(processed_data)
+        print(chunks)
 elif rank == 0: # Parallize routine
     with open(FILE_NAME, encoding="utf8") as f:
         coords_data = []
