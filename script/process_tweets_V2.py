@@ -5,7 +5,7 @@ import time
 from mpi4py import MPI
 import operator
 
-twitter_file_name = "bigTwitter.json"
+twitter_file_name = "smallTwitter.json"
 
 # get start time
 start_time = time.time()
@@ -25,10 +25,6 @@ def construct_melb_grid():
             grid_data = {}
             properties = val["properties"]
             grid_data["id"] = properties["id"]
-            grid_data["xmax"] = properties["xmax"]
-            grid_data["xmin"] = properties["xmin"]
-            grid_data["ymin"] = properties["ymin"]
-            grid_data["ymax"] = properties["ymax"]
             grid_data["count"] = 0
             grid_data["hashtag_counts"] = {}
             areas.append(grid_data)
@@ -43,6 +39,7 @@ def construct_melb_grid():
             ax = int(list(grid_data["id"])[1]) - 1
             ay = ord(list(grid_data["id"])[0]) - 65
             area_matrix[ay, ax] = grid_data
+
         return area_matrix
 
 

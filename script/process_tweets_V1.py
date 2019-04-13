@@ -23,10 +23,6 @@ def construct_melb_grid(file_name):
             grid_data = {}
             properties = val["properties"]
             grid_data["id"] = properties["id"]
-            grid_data["xmax"] = properties["xmax"]
-            grid_data["xmin"] = properties["xmin"]
-            grid_data["ymin"] = properties["ymin"]
-            grid_data["ymax"] = properties["ymax"]
             grid_data["count"] = 0
             grid_data["hashtag_counts"] = {}
             grid_data["row_group"] = properties["id"][0:1]
